@@ -26,6 +26,7 @@ void printStructsSale(Sale* sales, int numberOfSale);
 int countLines(FILE *fp);
 void outputReport(Sale *sales, Product *products, int numberOfProducts, int numberOfSales);
 void writeTotalSaleDay(FILE *reportFile, Sale *sales, int numberOfSales);
+void writeTotalSaleProduct(FILE *reportFile, Sale *sales, Product *products, int numberOfSales, int numberOfProducts);
 
 int main() {
     FILE *productFile = openFile("produtos.txt");
@@ -51,6 +52,35 @@ int main() {
 
     free(sales);
     free(products);
+}
+
+void writeTotalSaleProduct(FILE *reportFile, Sale *sales, Product *products, int numberOfSales, int numberOfProducts) {
+    int productSales = 0;
+    float totalSales = 0.0;
+    float totalQuantity = 0.0;
+
+    fprintf(reportFile, "\n\nTotal Sales by Product\n\n");
+    fprintf(reportFile, "Product     Total Sold      Total Quantity   Average/Price      Profitability\n\n");
+
+    for(int i = 0; i < numberOfProducts; i++) {
+        for(int j = 0; j < numberOfSales; j++) {
+            if(products[i].productID == sales[j].product) {
+                totalSales += sales[j].price;
+                totalQuantity += sales[j].quantity;
+                productSales++;
+            }
+        }
+
+        float averagePrice = totalSales / productSales;
+        float profitability = (averagePrice / products[i].cost - 1) * 100;
+
+        fprintf(reportFile, "%d        %.2f          %d          %.2f             %.1f\n", 
+                products[i].productID, totalSales, totalQuantity, averagePrice, profitability);
+
+        productSales = 0;
+        totalSales = 0.0;
+        totalQuantity = 0.0;
+    }
 }
 
 void writeTotalSaleDay(FILE *reportFile, Sale *sales, int numberOfSales) {
@@ -81,6 +111,7 @@ void outputReport(Sale *sales, Product *products, int numberOfProducts, int numb
     FILE *reportFile = fopen("final_report.txt", "w+");
 
     writeTotalSaleDay(reportFile, sales, numberOfSales);
+    writeTotalSaleProduct(reportFile, sales, products, numberOfSales, numberOfProducts);
 }
 
 FILE* openFile(char fileName[]) {
