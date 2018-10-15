@@ -164,6 +164,57 @@ float weightedAverageProfitability(Sale *sales, Product *products, int numberOfS
     return sum/productSold;
 }
 
+typedef struct profitability {
+    int product;
+    float profitability;
+} Profitability;
+
+void orderProfitability(Profitability *profitabilityByProducts, int numberOfProducts) {
+    for(int i = 0; i < numberOfProducts -1; i++) {
+        for(int j = 0; j < numberOfProducts - i - 1; j++) {
+            if(profitabilityByProducts[j].profitability < profitabilityByProducts[j+1].profitability) {
+                Profitability temp = profitabilityByProducts[j];
+                profitabilityByProducts[j] = profitabilityByProducts[j+1];
+                profitabilityByProducts[j+1] = temp;
+            }
+        }
+    }
+}
+
+void printProfitability(Profitability *profitabilities, int numberOfProducts) {
+    for(int i = 0; i < numberOfProducts; i++) {
+        printf("Product: %d profitability: %.2f\n", profitabilities[i].product, profitabilities[i].profitability);
+    }
+}
+
+Profitability *profitabilityByProducts(Sale *sales, Product *products, int numberOfSales, int numberOfProducts) {
+    Profitability *profitabilityByProduct = malloc(sizeof(Profitability) * numberOfProducts);
+
+    for(int i = 0; i < numberOfProducts; i++) {
+        float avgProf = averageProfitability(sales, products[i], numberOfSales);
+        profitabilityByProduct[i].product = products[i].productID;
+        profitabilityByProduct[i].profitability = avgProf;
+    }
+
+    orderProfitability(profitabilityByProduct, numberOfProducts);
+
+    return profitabilityByProduct;
+}
+
+void writeProfitabilityByProduct(FILE *reportFile, Sale *sales, Product *products, int numberOfSales, int numberOfProducts) {
+    Profitability *profitabilityProducts = profitabilityByProducts(sales, products, numberOfSales, numberOfProducts);
+    float profitabilityAverage = weightedAverageProfitability(sales, products, numberOfSales, numberOfProducts);
+
+    fprintf(reportFile, "\n\nMore profitable products");
+    fprintf(reportFile, "\n\nAverage profitability = %.2f \n\n", profitabilityAverage);
+
+    for(int i = 0; i < numberOfProducts; i++){
+        if(profitabilityProducts[i].profitability >= profitabilityAverage) {
+            fprintf(reportFile, "%d %.2f \n", profitabilityProducts[i].product, profitabilityProducts[i].profitability);
+        }
+    }
+}
+
 void writeTotalStatistic(FILE *reportFile, Sale *sales, Product *products, int numberOfSales, int numberOfProducts) {
     float totalSale = totalSales(sales, numberOfSales);
     float totalDays = totalDaysOfPeriod(sales, numberOfSales);
@@ -209,6 +260,7 @@ void outputReport(Sale *sales, Product *products, int numberOfProducts, int numb
     writeTotalSaleDay(reportFile, sales, numberOfSales);
     writeTotalSaleProduct(reportFile, sales, products, numberOfSales, numberOfProducts);
     writeTotalStatistic(reportFile, sales, products, numberOfSales, numberOfProducts);
+    writeProfitabilityByProduct(reportFile, sales, products, numberOfSales, numberOfProducts);
 }
 
 FILE* openFile(char fileName[]) {
