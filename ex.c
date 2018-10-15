@@ -109,6 +109,18 @@ float totalProductSold(Sale *sales, int numberOfSales) {
     return totalSold;
 }
 
+float productRevenue(Sale *sales, Product product, int numberOfSales) {
+    float totalSales = 0.0;
+
+    for(int i = 0; i < numberOfSales; i++) {
+        if(sales[i].product == product.productID) {
+            totalSales += sales[i].price;
+        }
+    }
+
+    return totalSales;
+}
+
 int totalDaysOfPeriod(Sale *sales, int numberOfSales) {
     int totalDays = 0;
     
@@ -237,7 +249,7 @@ void writeTotalSaleDay(FILE *reportFile, Sale *sales, int numberOfSales) {
 
      
     fprintf(reportFile, "Total Day Sales\n\n");
-    fprintf(reportFile, "Day            Total            Average\n\n");
+    fprintf(reportFile, "Day            Total     Average\n\n");
 
     for(int i = 0; i < numberOfSales; i++) {
         dayTotal += sales[i].price;
@@ -254,6 +266,52 @@ void writeTotalSaleDay(FILE *reportFile, Sale *sales, int numberOfSales) {
     }
 }
 
+typedef struct productContribution {
+    int product;
+    float totalSales;
+    float contribution;
+} ProductContribution;
+
+void orderContributions(ProductContribution *contributionByProduct, int numberOfProducts) {
+    for(int i = 0; i < numberOfProducts -1; i++) {
+        for(int j = 0; j < numberOfProducts - i - 1; j++) {
+            if(contributionByProduct[j].contribution < contributionByProduct[j+1].contribution) {
+                ProductContribution temp = contributionByProduct[j];
+                contributionByProduct[j] = contributionByProduct[j+1];
+                contributionByProduct[j+1] = temp;
+            }
+        }
+    }
+}
+
+ProductContribution *productsContributions(Sale *sales, Product *products, int numberOfSales, int numberOfProducts) {
+    ProductContribution *contributionByProduct = malloc(sizeof(ProductContribution) * numberOfProducts);
+    float totalSale = totalSales(sales, numberOfSales);
+
+    for(int i = 0; i < numberOfProducts; i++) {
+        float productSales = productRevenue(sales, products[i], numberOfSales);
+        contributionByProduct[i].product = products[i].productID;
+        contributionByProduct[i].totalSales = productSales;
+        contributionByProduct[i].contribution = (productSales / totalSale) * 100;
+    }
+
+    orderContributions(contributionByProduct, numberOfProducts);
+
+    return contributionByProduct;
+}
+
+void writeContributionByProcut(FILE *reportFile, Sale *sales, Product *products, int numberOfSales, int numberOfProducts) {
+    ProductContribution *contributionsByProduct = productsContributions(sales, products, numberOfSales, numberOfProducts);
+
+    fprintf(reportFile, "\n\nContribution by products\n");
+    fprintf(reportFile, "\nProduct      Total Sales      Contribution\n");
+
+    for(int i = 0; i < numberOfProducts; i++) {
+        fprintf(reportFile, "%d         %.2f          %.2f \n", contributionsByProduct[i].product, 
+                contributionsByProduct[i].totalSales, contributionsByProduct[i].contribution);
+    }
+}
+
 void outputReport(Sale *sales, Product *products, int numberOfProducts, int numberOfSales) {
     FILE *reportFile = fopen("final_report.txt", "w+");
 
@@ -261,6 +319,7 @@ void outputReport(Sale *sales, Product *products, int numberOfProducts, int numb
     writeTotalSaleProduct(reportFile, sales, products, numberOfSales, numberOfProducts);
     writeTotalStatistic(reportFile, sales, products, numberOfSales, numberOfProducts);
     writeProfitabilityByProduct(reportFile, sales, products, numberOfSales, numberOfProducts);
+    writeContributionByProcut(reportFile, sales, products, numberOfSales, numberOfProducts);
 }
 
 FILE* openFile(char fileName[]) {
