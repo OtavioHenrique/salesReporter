@@ -35,8 +35,8 @@ float averageProfitability(Sale *sales, Product product, int numberOfSales);
 float productSoldQuantity(Sale *sales, Product product, int numberOfSales);
 
 int main() {
-    FILE *productFile = openFile("produtos.txt");
-    FILE *saleFile = openFile("vendas.txt");
+    FILE *productFile = openFile("input/products.csv");
+    FILE *saleFile = openFile("input/sales.csv");
 
     int numberOfProducts = countLines(productFile);
     int numberOfSales = countLines(saleFile);
