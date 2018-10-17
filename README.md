@@ -70,9 +70,13 @@ Prod. Total    quantity  Average Price  Profitability.
 At this part you need to write five things:
 
 1 - Total Sales - Sum of all sale's price
+
 2 - Total of products sold - Sum of all quantity
+
 3 - Average Sales by day - Division of total by period days
+
 4 - Average Sales by product - Division of total by sold products
+
 5 - Average profitability - Weighted average of profitability for each product, using quantity sold as weight.
 
 ```
@@ -102,4 +106,19 @@ Product  Profitability
  16990       44.8%
  12885       42.5%
  22315       36.8%
+```
+
+#### Part V - Contribution by Product
+
+At this part, for each product you need to write its contribution on final revenue.
+
+*The products needs to be in ascending order of contribution*
+
+```
+Contribution by Product
+
+Product   Total Sales    Contribution
+18550      87392.51         13.4%
+14393      61338.90         9.4%
+12184      51045.09         7.8%
 ```
