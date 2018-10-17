@@ -54,3 +54,31 @@ At this part for each product you write the sum of its sale's price, the sum of 
 *To get a product profitability you need to divide the product average sale's price by the product cost (avaible at `products.csv`), for example, if the average sale's price is U$33.90 and the product cost U$26.88 the profitability will be `profitability = (33.90 / 26.88 - 1)  * 100 = 26.1%`*
 
 *It's important to note that to obtain the product average sale's price you need to sum the sale's price and the quantity sold.*
+
+```
+Total Sale's by Prodyct
+Prod. Total    quantity  Average Price  Profitability.
+12102 24533.09   724        33.90           26.1%
+12155 12357.31   554        22.31           23.9%
+12184 51045.09   2961       17.24           31.3%
+```
+
+##### Part III - Statistics of Period
+
+At this part you need to write five things:
+
+1 - Total Sales - Sum of all sale's price
+2 - Total of products sold - Sum of all quantity
+3 - Average Sales by day - Division of total by period days
+4 - Average Sales by product - Division of total by sold products
+5 - Average profitability - Weighted average of profitability for each product, using quantity sold as weight.
+
+```
+Statistics of Period
+
+Total of Sales (U$) 653457.38
+Products Sold 13158
+Average by day (U$) 1979.90
+Average by product (U$) 49.66
+AverageProfitability 25.2%
+```
