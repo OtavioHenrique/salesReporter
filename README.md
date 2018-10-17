@@ -37,6 +37,7 @@ Ex:
 
 ```
 Total Sales by Day
+
 Day        Total   Average
 02/01/2015 3844.17 53.80
 03/01/2015 5441.09 72.25
@@ -57,13 +58,14 @@ At this part for each product you write the sum of its sale's price, the sum of 
 
 ```
 Total Sale's by Prodyct
+
 Prod. Total    quantity  Average Price  Profitability.
 12102 24533.09   724        33.90           26.1%
 12155 12357.31   554        22.31           23.9%
 12184 51045.09   2961       17.24           31.3%
 ```
 
-##### Part III - Statistics of Period
+#### Part III - Statistics of Period
 
 At this part you need to write five things:
 
@@ -81,4 +83,23 @@ Products Sold 13158
 Average by day (U$) 1979.90
 Average by product (U$) 49.66
 AverageProfitability 25.2%
+```
+
+#### Part IV - Most profitable products
+
+Write all products that have profitability greater than average (achieved at part III).
+
+*All lines of these part have a product ID and his profitability*
+*The list must have in ascending order*
+
+```
+Most profitable products
+
+Average profitability = 25.2%
+
+Product  Profitability
+ 15443       46.1%
+ 16990       44.8%
+ 12885       42.5%
+ 22315       36.8%
 ```
