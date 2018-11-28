@@ -1,3 +1,4 @@
+/* Otavio Henrique dos Passos Valadares 18115617 */
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -35,8 +36,8 @@ float averageProfitability(Sale *sales, Product product, int numberOfSales);
 float productSoldQuantity(Sale *sales, Product product, int numberOfSales);
 
 int main() {
-    FILE *productFile = openFile("input/products.csv");
-    FILE *saleFile = openFile("input/sales.csv");
+    FILE *productFile = openFile("PRODUTOS.txt");
+    FILE *saleFile = openFile("VENDAS.txt");
 
     int numberOfProducts = countLines(productFile);
     int numberOfSales = countLines(saleFile);
@@ -47,12 +48,6 @@ int main() {
 
     printf("%d products detected\n", numberOfProducts);
     printf("%d sales detected\n", numberOfSales);
-
-    /*printf("\n\nProducts Detected: \n\n");*/
-    /*printStructsProduct(products, numberOfProducts);*/
-
-    /*printf("\n\nSales Detected: \n\n");*/
-    /*printStructsSale(sales, numberOfSales);*/
 
     outputReport(sales, products, numberOfProducts, numberOfSales);
 
@@ -80,7 +75,7 @@ void writeTotalSaleProduct(FILE *reportFile, Sale *sales, Product *products, int
         float averagePrice = totalSales / productSales;
         float profitability = (averagePrice / products[i].cost - 1) * 100;
 
-        fprintf(reportFile, "%d        %.2f          %d          %.2f             %.1f\n", 
+        fprintf(reportFile, "%d        %.2f          %d          %.2f             %.1f\n",
                 products[i].productID, totalSales, totalQuantity, averagePrice, profitability);
 
         productSales = 0;
@@ -123,7 +118,7 @@ float productRevenue(Sale *sales, Product product, int numberOfSales) {
 
 int totalDaysOfPeriod(Sale *sales, int numberOfSales) {
     int totalDays = 0;
-    
+
     for(int i = 0; i < numberOfSales; i++) {
         if(sales[i].day != sales[i+1].day) {
             totalDays++;
@@ -142,7 +137,7 @@ float averageProfitability(Sale *sales, Product product, int numberOfSales) {
             productSold++;
             totalSales += sales[i].price;
         }
-    } 
+    }
 
     float averagePrice = totalSales / productSold;
     float profitability = (averagePrice / product.cost - 1) * 100;
@@ -225,6 +220,8 @@ void writeProfitabilityByProduct(FILE *reportFile, Sale *sales, Product *product
             fprintf(reportFile, "%d %.2f \n", profitabilityProducts[i].product, profitabilityProducts[i].profitability);
         }
     }
+
+    free(profitabilityProducts);
 }
 
 void writeTotalStatistic(FILE *reportFile, Sale *sales, Product *products, int numberOfSales, int numberOfProducts) {
@@ -234,7 +231,7 @@ void writeTotalStatistic(FILE *reportFile, Sale *sales, Product *products, int n
     float profitabilityAverage = weightedAverageProfitability(sales, products, numberOfSales, numberOfProducts);
 
     fprintf(reportFile, "\n\nTotal and Statistic of Period\n\n");
-    
+
     fprintf(reportFile, "Total Sales %.2f \n", totalSale);
     fprintf(reportFile, "Quantity of products sold %d \n", productSold);
     fprintf(reportFile, "Average by weekday %.2f \n", totalSale/totalDays);
@@ -247,14 +244,14 @@ void writeTotalSaleDay(FILE *reportFile, Sale *sales, int numberOfSales) {
     float dayTotal = 0.0;
     int daySales = 0;
 
-     
+
     fprintf(reportFile, "Total Day Sales\n\n");
     fprintf(reportFile, "Day            Total     Average\n\n");
 
     for(int i = 0; i < numberOfSales; i++) {
         dayTotal += sales[i].price;
         daySales++;
-        
+
         if (sales[i+1].day != sales[i].day) {
             total += dayTotal;
             fprintf(reportFile, "%d/%d/%d      %.2f     %.2f\n", sales[i].day, sales[i].month,
@@ -307,19 +304,25 @@ void writeContributionByProcut(FILE *reportFile, Sale *sales, Product *products,
     fprintf(reportFile, "\nProduct      Total Sales      Contribution\n");
 
     for(int i = 0; i < numberOfProducts; i++) {
-        fprintf(reportFile, "%d         %.2f          %.2f \n", contributionsByProduct[i].product, 
+        fprintf(reportFile, "%d         %.2f          %.2f \n", contributionsByProduct[i].product,
                 contributionsByProduct[i].totalSales, contributionsByProduct[i].contribution);
     }
+
+    free(contributionsByProduct);
 }
 
 void outputReport(Sale *sales, Product *products, int numberOfProducts, int numberOfSales) {
-    FILE *reportFile = fopen("final_report.txt", "w+");
+    FILE *reportFile = fopen("TOTVENDAS.txt", "w+");
 
     writeTotalSaleDay(reportFile, sales, numberOfSales);
     writeTotalSaleProduct(reportFile, sales, products, numberOfSales, numberOfProducts);
     writeTotalStatistic(reportFile, sales, products, numberOfSales, numberOfProducts);
     writeProfitabilityByProduct(reportFile, sales, products, numberOfSales, numberOfProducts);
     writeContributionByProcut(reportFile, sales, products, numberOfSales, numberOfProducts);
+
+    printf("Report successfully created as TOTVENDAS.txt");
+
+    pclose(reportFile);
 }
 
 FILE* openFile(char fileName[]) {
